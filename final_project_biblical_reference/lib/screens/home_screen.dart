@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 
 import 'package:final_project_biblical_reference/common/strings.dart' as strings;
 
+import 'package:dart_openai/dart_openai.dart';
+import 'package:final_project_biblical_reference/env/env.dart' as env;
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -47,10 +50,37 @@ class _InputForParaphraseState extends State<InputForParaphrase> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _textController = TextEditingController();
   String? data;
+  String? response;
 
+  void getReferenceAPI(data) async {
+    OpenAI.apiKey = env.apiKey;
+
+    final userMessage = OpenAIChatCompletionChoiceMessageModel(
+      content: [
+        OpenAIChatCompletionChoiceMessageContentItemModel.text(
+          data
+        ),
+      ],
+      role: OpenAIChatMessageRole.user,
+    );
+
+    OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat.create(
+      model: "gpt-3.5-turbo",
+      messages: [userMessage],
+    );
+
+    //print(chatCompletion.choices.single.message.content?.first.text);
+    
+    setState(() {
+      response = chatCompletion.choices.single.message.content?.first.text;
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    ThemeData tema = Theme.of(context);
 
     return Form(
       key: _formKey,
@@ -75,18 +105,36 @@ class _InputForParaphraseState extends State<InputForParaphrase> {
             child: Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Validate will return true if the form is valid, or false if
-                  // the form is invalid.
+                  // Validate will return true if the form is valid, or false if the form is invalid
                   if (_formKey.currentState!.validate()) {
                     data = _textController.text;
 
-                    //print(data);
+                    getReferenceAPI(data);
                   }
                 },
                 child: const Text('Submit'),
               ),
             ),
           ),
+          Visibility(
+            visible:  response != null,
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              margin: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: tema.colorScheme.secondary, // Culoarea de fundal a containerului
+                borderRadius: BorderRadius.circular(10.0),
+                border: Border.all(
+                  color: tema.colorScheme.primary,
+                  width: 3.0,
+                ),
+              ),
+              child: Text(
+                response ?? '',
+              style: TextStyle(color: tema.colorScheme.onSecondary),
+              ),
+            ),
+          )
         ],
       ),
     );
