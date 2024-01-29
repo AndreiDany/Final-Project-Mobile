@@ -75,7 +75,9 @@ class _InputAndResponseState extends State<InputAndResponse> {
                     if (_formKey.currentState!.validate()) {
                       data = _textController.text;
 
-                      isLoading = true;
+                      setState(() {
+                        isLoading = true;
+                      });
 
                       getReferenceAPI(data);
                     }
@@ -91,6 +93,11 @@ class _InputAndResponseState extends State<InputAndResponse> {
         visible: response != null,
         child: ResponseBox(response: response),
       ),
+      Visibility(
+          visible: isLoading == true,
+          child: const Center(
+            child: CircularProgressIndicator(),
+          )),
     ]);
   }
 }
