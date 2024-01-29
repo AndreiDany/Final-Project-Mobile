@@ -3,11 +3,32 @@ import 'package:flutter/material.dart';
 
 import 'package:final_project_biblical_reference/common/strings.dart' as strings;
 
-import 'package:dart_openai/dart_openai.dart';
-import 'package:final_project_biblical_reference/env/env.dart' as env;
+import 'reference_from_paraphrase.dart';
+import 'passage_of_reference.dart';
+import 'commentary_for_passage.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  int _selectedIndex = 0;
+
+  static const List<Widget> _widgetOptions = <Widget>[
+    ReferenceFromParaphrase(),
+    PassageOfReference(),
+    CommentaryForPassage(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,118 +45,28 @@ class HomeScreen extends StatelessWidget {
               )
             ),
         ),
-        backgroundColor: tema.colorScheme.primary,
-        
+        backgroundColor: tema.colorScheme.primary,   
       ),
-      body: Container(
-        color: const Color(0xFFEEEEEE),
-        child: const Padding(
-          padding: EdgeInsets.only(top: 64.0, left: 32, right: 32),
-          child: InputForParaphrase(),
-        ),
-      ),
-    );
-  }
-}
 
-class InputForParaphrase extends StatefulWidget {
-  const InputForParaphrase({super.key});
+      body: _widgetOptions.elementAt(_selectedIndex),
 
-  @override
-  State<InputForParaphrase> createState() => _InputForParaphraseState();
-}
-
-class _InputForParaphraseState extends State<InputForParaphrase> {
-
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _textController = TextEditingController();
-  String? data;
-  String? response;
-
-  void getReferenceAPI(data) async {
-    OpenAI.apiKey = env.apiKey;
-
-    final userMessage = OpenAIChatCompletionChoiceMessageModel(
-      content: [
-        OpenAIChatCompletionChoiceMessageContentItemModel.text(
-          data
-        ),
-      ],
-      role: OpenAIChatMessageRole.user,
-    );
-
-    OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat.create(
-      model: "gpt-3.5-turbo",
-      messages: [userMessage],
-    );
-
-    //print(chatCompletion.choices.single.message.content?.first.text);
-    
-    setState(() {
-      response = chatCompletion.choices.single.message.content?.first.text;
-    });
-
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    ThemeData tema = Theme.of(context);
-
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          TextFormField(
-            controller: _textController,
-            decoration: const InputDecoration(
-              hintText: 'Enter the paraphrased Bible verse',
-              border: OutlineInputBorder(),
-            ),
-            validator: (String? value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.menu_book_rounded),
+            label: 'Reference',
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Validate will return true if the form is valid, or false if the form is invalid
-                  if (_formKey.currentState!.validate()) {
-                    data = _textController.text;
-
-                    getReferenceAPI(data);
-                  }
-                },
-                child: const Text('Submit'),
-              ),
-            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.text_snippet_rounded),
+            label: 'Passage',
           ),
-          Visibility(
-            visible:  response != null,
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              margin: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: tema.colorScheme.secondary, // Culoarea de fundal a containerului
-                borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(
-                  color: tema.colorScheme.primary,
-                  width: 3.0,
-                ),
-              ),
-              child: Text(
-                response ?? '',
-              style: TextStyle(color: tema.colorScheme.onSecondary),
-              ),
-            ),
-          )
+          BottomNavigationBarItem(
+            icon: Icon(Icons.comment_rounded),
+            label: 'Commentary',
+          ),
         ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
