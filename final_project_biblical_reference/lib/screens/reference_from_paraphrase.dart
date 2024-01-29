@@ -14,6 +14,7 @@ class ReferenceFromParaphrase extends StatelessWidget {
       child: const Padding(
         padding: EdgeInsets.only(top: 64.0, left: 32, right: 32),
         child:
+            //Primeste inceputul mesajului care va fi trimis catre OpenAi
             InputAndResponse(query: "Ofera-mi versetul referintei biblice: "),
       ),
     );

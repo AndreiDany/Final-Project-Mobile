@@ -18,7 +18,7 @@ class BiblicalReferenceApp extends StatelessWidget {
 
       title: strings.appName,
 
-      //Application theme
+      //Tema aplicatiei
       theme: ThemeData(
           brightness: Brightness.light,
           colorScheme: const ColorScheme.light(
@@ -28,7 +28,7 @@ class BiblicalReferenceApp extends StatelessWidget {
             onSecondary: Colors.white,
           )),
 
-      //The home screen of the app
+      //Pagina pricipala a aplicatiei
       home: const HomeScreen(),
     );
   }

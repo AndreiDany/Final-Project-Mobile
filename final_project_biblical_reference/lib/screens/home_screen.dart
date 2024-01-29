@@ -16,9 +16,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
+  //Indexul chat-ului selectat
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
+    //Cele trei variante de chat
     ReferenceFromParaphrase(),
     PassageOfReference(),
     CommentaryForPassage(),
@@ -47,9 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         backgroundColor: tema.colorScheme.primary,   
       ),
-
+      //Chat-ul selectat
       body: _widgetOptions.elementAt(_selectedIndex),
 
+      //Bara de navigare
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

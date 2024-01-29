@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//Cele necesare petru a lucra cu libraria dart_openai
 import 'package:dart_openai/dart_openai.dart';
 import 'package:final_project_biblical_reference/env/env.dart' as env;
 
@@ -23,7 +24,8 @@ class _InputAndResponseState extends State<InputAndResponse> {
   String? response;
   bool isLoading = false;
 
-  void getReferenceAPI(data) async {
+  //Metoda care trimite intrebarea si primeste raspunsul de la OpenAI
+  void getResponseFromOpenAPI(data) async {
     OpenAI.apiKey = env.apiKey;
 
     final userMessage = OpenAIChatCompletionChoiceMessageModel(
@@ -79,7 +81,7 @@ class _InputAndResponseState extends State<InputAndResponse> {
                         isLoading = true;
                       });
 
-                      getReferenceAPI(data);
+                      getResponseFromOpenAPI(data);
                     }
                   },
                   child: const Text('Submit'),
@@ -89,6 +91,7 @@ class _InputAndResponseState extends State<InputAndResponse> {
           ],
         ),
       ),
+      //Va fi vizibila una dintre cele doua: caseta text cu rapunsul sau indicatorul circular
       Visibility(
         visible: response != null,
         child: ResponseBox(response: response),
