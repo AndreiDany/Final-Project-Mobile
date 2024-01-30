@@ -24,7 +24,7 @@ class _InputAndResponseState extends State<InputAndResponse> {
   String? response;
   bool isLoading = false;
 
-  //Metoda care trimite intrebarea si primeste raspunsul de la OpenAI
+  /// Metoda care trimite intrebarea si primeste raspunsul de la OpenAI
   void getResponseFromOpenAPI(data) async {
     OpenAI.apiKey = env.apiKey;
 
@@ -115,17 +115,21 @@ class ResponseBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 500,
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: SingleChildScrollView(
-        child: Text(
-          response ?? '',
-          style: const TextStyle(color: Colors.black),
+    return Expanded(
+      child: SizedBox.expand(
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 32.0),
+          padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: SingleChildScrollView(
+            child: Text(
+              response ?? '',
+              style: const TextStyle(color: Colors.black),
+            ),
+          ),
         ),
       ),
     );
